@@ -31,7 +31,7 @@ int getaddrinfo(const char *node, const char *service,
 	int (*next_getaddrinfo)(const char*, const char*, const struct addrinfo*, struct addrinfo**) = dlsym(RTLD_NEXT, "getaddrinfo");
 	int ret = (*next_getaddrinfo)(node, service, hints, res);
 
-	if (ret) {
+	if (ret || *res == NULL) {
 		return ret;
 	}
 
