@@ -55,8 +55,14 @@ int getaddrinfo(const char *node, const char *service,
 		return ret;
 	}
 
+	char *ai_canonname = NULL;
 	size_t i = 0;
         for (p = *res; p; p = p->ai_next) {
+		if (i == 0) {
+			/* store ai_canonname */
+			ai_canonname = p->ai_canonname;
+			p->ai_canonname = NULL;
+		}
 		list[i++] = p;
 	}
 
@@ -69,6 +75,9 @@ int getaddrinfo(const char *node, const char *service,
 		list[j]->ai_next = list[i]->ai_next;
 		list[i]->ai_next = tmp.ai_next;
 	}
+
+	/* restore ai_canonname */
+	list[0]->ai_canonname = ai_canonname;
 
 	free(list);
 
